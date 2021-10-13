@@ -20,7 +20,9 @@ export class PhotoService {
   // TODO: Move to separate service/module/controller
 
   async findallphotoMetaData(): Promise<any> {
-    return await this.photoMetadataRepository.find();
+    return await this.photoMetadataRepository.query(
+      'select * from photo_metadata',
+    );
   }
   async findphotoMetaData(): Promise<any> {
     // return await this.photoRepository.find({ relations: ['metadata'] });
