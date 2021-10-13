@@ -1,6 +1,13 @@
 /* eslint-disable prettier/prettier */
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { PhotoMetadata } from './PhotoMetadata.entity';
 
 @Entity()
 export class Photo {
@@ -16,4 +23,6 @@ export class Photo {
   views: number;
   @Column()
   isPublished: boolean;
+  @OneToOne((type) => PhotoMetadata, (photometadata) => photometadata.photo)
+  metadata: PhotoMetadata;
 }

@@ -5,29 +5,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './Products/Products.module';
 import { PhotoModule } from './photo/photo.module';
-import { PhotoService } from './photo/photo.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-
+import { DbConfig } from './database.providers';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'Xisys88@',
-      database: 'postgres',
-      entities: ['dist/**/*.entity.js'],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(DbConfig.databaseProviders()),
     ProductsModule,
     PhotoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
-  // providers: [AppService, ...databaseProviders],
-  // exports: [...databaseProviders],
 })
 export class AppModule {
   constructor(private connection: Connection) {}

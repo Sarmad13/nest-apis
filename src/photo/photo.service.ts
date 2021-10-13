@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Photo } from 'src/entity/Photo.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection } from 'typeorm';
 import { Connection } from 'typeorm';
+import { PhotoMetadata } from 'src/entity/PhotoMetadata.entity';
 
 @Injectable()
 export class PhotoService {
@@ -13,7 +14,25 @@ export class PhotoService {
     @InjectRepository(Photo)
     private photoRepository: Repository<Photo>,
     private connection: Connection,
+    @InjectRepository(PhotoMetadata)
+    private photoMetadataRepository: Repository<PhotoMetadata>,
   ) {}
+  // TODO: Move to separate service/module/controller
+
+  async findallphotoMetaData(): Promise<any> {
+    return await this.photoMetadataRepository.find();
+  }
+  async findphotoMetaData(): Promise<any> {
+    // return await this.photoRepository.find({ relations: ['metadata'] });
+    return await this.connection
+      .createQueryBuilder(Photo, 'photo')
+      .leftJoinAndSelect('photo.metadata', 'metadata')
+      .getMany();
+  }
+  async savePhotoMetaData(photo: Photo) {
+    return await this.photoRepository.save(photo);
+  }
+  // Till here
   async findall(): Promise<any> {
     return await this.photoRepository.find();
   }
@@ -34,6 +53,14 @@ export class PhotoService {
       .createQueryBuilder('Photo')
       .select()
       .where('id=:id', { id: id })
+      .execute();
+  }
+  async remove(id: number) {
+    return await getConnection()
+      .createQueryBuilder()
+      .delete()
+      .from(Photo)
+      .where('id:id', { id: id })
       .execute();
   }
 }
